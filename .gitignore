@@ -1,0 +1,11 @@
+# System files
+.DS_Store
+.Trash/
+
+# Parent directory files (keep only project files)
+../../
+../../../
+../../../../
+
+# Empty work directory
+work/

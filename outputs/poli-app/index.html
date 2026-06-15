@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Poli is a calm, sensory-friendly productivity app for autistic and ADHD adults.">
+    <title>Poli | Calm Productivity</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell" data-theme="dim">
+      <header class="topbar">
+        <a class="brand" href="#today" aria-label="Poli home">
+          <span class="cat-mark" aria-hidden="true">
+            <span class="cat-ear left"></span>
+            <span class="cat-ear right"></span>
+            <span class="cat-face">
+              <span class="cat-eye left"></span>
+              <span class="cat-eye right"></span>
+            </span>
+          </span>
+          <span>
+            <strong>Poli</strong>
+            <small>calm next steps</small>
+          </span>
+        </a>
+
+        <nav class="section-tabs" aria-label="App sections">
+          <a href="#today" class="active">Today</a>
+          <a href="#start">Start</a>
+          <a href="#focus">Focus</a>
+          <a href="#chores">Chores</a>
+          <a href="#dashboard">Progress</a>
+          <a href="#routines">Routines</a>
+          <a href="#settings">Settings</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero" id="today" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">For softer starts, clearer days, and kinder recovery.</p>
+            <h1 id="hero-title">Let Poli help you choose one calm next step.</h1>
+            <p>
+              A sensory-friendly task space for autistic and ADHD adults, built around tiny actions,
+              low-pressure focus, routines, and overwhelm recovery.
+            </p>
+            <p class="help-copy">
+              Start by writing down what is in your head. Poli keeps the list visible, then helps you
+              choose one doable step instead of trying to hold everything at once.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-action" id="pickTaskButton" type="button">Pick my next step</button>
+              <button class="secondary-action" id="overwhelmButton" type="button">I feel overwhelmed</button>
+            </div>
+            <p class="button-help">
+              <strong>Pick my next step</strong> chooses a low-effort task for you. <strong>I feel overwhelmed</strong>
+              simplifies the screen and shows the smallest possible action.
+            </p>
+          </div>
+
+          <aside class="companion-panel" aria-label="Poli companion">
+            <div class="cat-portrait" aria-hidden="true">
+              <div class="moon"></div>
+              <div class="cat-body">
+                <div class="cat-head">
+                  <span class="portrait-ear left"></span>
+                  <span class="portrait-ear right"></span>
+                  <span class="portrait-eye left"></span>
+                  <span class="portrait-eye right"></span>
+                  <span class="portrait-nose"></span>
+                  <span class="portrait-mouth"></span>
+                  <span class="whisker whisker-left-one"></span>
+                  <span class="whisker whisker-left-two"></span>
+                  <span class="whisker whisker-right-one"></span>
+                  <span class="whisker whisker-right-two"></span>
+                </div>
+                <span class="cat-paw left"></span>
+                <span class="cat-paw right"></span>
+                <div class="cat-tail"></div>
+              </div>
+            </div>
+            <div class="poli-note" id="poliNote" aria-live="polite">
+              Add a few tasks, then I can help you choose one.
+            </div>
+          </aside>
+        </section>
+
+        <section class="launch-pad" id="start" aria-label="Start support">
+          <div class="panel checkin-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Start here</p>
+                <h2>Match the app to your capacity</h2>
+                <p class="section-help">
+                  Capacity changes day to day. Poli will pick gentler tasks when your energy is low.
+                </p>
+              </div>
+            </div>
+            <div class="capacity-options" aria-label="Current capacity">
+              <button type="button" data-capacity="low">Low capacity</button>
+              <button type="button" data-capacity="medium" class="active">Medium</button>
+              <button type="button" data-capacity="high">Ready for more</button>
+            </div>
+          </div>
+
+          <div class="panel capture-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Messy capture</p>
+                <h2>Paste the whole brain dump</h2>
+                <p class="section-help">
+                  Use this when single-task entry is too slow. Each line becomes a task, and Poli gives it
+                  a gentle time estimate.
+                </p>
+              </div>
+            </div>
+            <label>
+              Brain dump text
+              <textarea id="brainDumpText" rows="5" placeholder="Example:
+reply to Mina
+laundry
+book dentist
+clean kitchen counter"></textarea>
+            </label>
+            <button class="primary-action full" id="compileDumpButton" type="button">Turn into tasks</button>
+          </div>
+
+          <div class="panel rescue-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">If stuck</p>
+                <h2>Recovery tools</h2>
+                <p class="section-help">
+                  These are for task paralysis, demand avoidance, or returning after distraction.
+                </p>
+              </div>
+            </div>
+            <div class="rescue-actions">
+              <button type="button" id="twoMinuteButton">Give me a 2-minute start</button>
+              <button type="button" id="bodyDoubleButton">Body-double script</button>
+              <button type="button" id="breakButton">I need a reset break</button>
+            </div>
+            <div class="rescue-output" id="rescueOutput" aria-live="polite">
+              Pick one when starting feels blocked.
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-grid" aria-label="Productivity workspace">
+          <div class="panel task-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Brain dump</p>
+                <h2>Add what is taking up space</h2>
+                <p class="section-help">
+                  Brain dump is for getting thoughts out of your head and into one calm place. It does
+                  not need to be organized yet.
+                </p>
+              </div>
+              <span class="task-count" id="taskCount">0 tasks</span>
+            </div>
+
+            <form class="task-form" id="taskForm">
+              <label>
+                Task
+                <input id="taskTitle" type="text" maxlength="90" placeholder="Example: reply to invoice email" required>
+              </label>
+              <div class="form-row">
+                <label>
+                  Energy
+                  <select id="taskEnergy">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                  <span class="field-help">How much effort this may take today.</span>
+                </label>
+                <label>
+                  Time
+                  <select id="taskTime">
+                    <option value="5">5 min</option>
+                    <option value="10">10 min</option>
+                    <option value="15" selected>15 min</option>
+                    <option value="25">25 min</option>
+                    <option value="45">45 min</option>
+                  </select>
+                  <span class="field-help">A rough guess, not a promise.</span>
+                </label>
+              </div>
+              <button class="primary-action full" type="submit">Add task</button>
+            </form>
+
+            <div class="filters" aria-label="Task filters">
+              <button type="button" class="chip active" data-filter="all">All</button>
+              <button type="button" class="chip" data-filter="low">Low energy</button>
+              <button type="button" class="chip" data-filter="quick">Quick</button>
+              <button type="button" class="chip" data-filter="done">Done</button>
+            </div>
+
+            <ul class="task-list" id="taskList" aria-live="polite"></ul>
+          </div>
+
+          <div class="panel next-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Now</p>
+                <h2>Current next step</h2>
+                <p class="section-help">
+                  This is the one thing to look at right now, so the whole list does not have to compete
+                  for your attention.
+                </p>
+              </div>
+            </div>
+            <div class="next-card" id="nextCard">
+              <p>No task selected yet.</p>
+              <small>Poli works best when the next action is small enough to begin in two minutes.</small>
+            </div>
+            <div class="micro-actions">
+              <button type="button" id="makeTinyButton">Make it tiny</button>
+              <button type="button" id="startFocusButton">Start focus</button>
+            </div>
+            <div class="tiny-steps" id="tinySteps" hidden></div>
+          </div>
+
+          <div class="panel focus-panel" id="focus">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Focus</p>
+                <h2>Gentle timer</h2>
+                <p class="section-help">
+                  Focus gives your brain a small time container. You can stop early, pause, or restart
+                  without losing progress.
+                </p>
+              </div>
+              <button type="button" class="icon-button" id="resetTimerButton" aria-label="Reset timer">Reset</button>
+            </div>
+            <label>
+              Focus intention
+              <input id="focusIntent" type="text" maxlength="80" placeholder="Example: stay with one email">
+            </label>
+            <div class="timer-display" id="timerDisplay">05:00</div>
+            <div class="timer-progress" aria-label="Timer progress">
+              <span id="timerProgressFill"></span>
+            </div>
+            <div class="timer-options" aria-label="Timer length">
+              <button type="button" data-minutes="5" class="active">5</button>
+              <button type="button" data-minutes="10">10</button>
+              <button type="button" data-minutes="15">15</button>
+              <button type="button" data-minutes="25">25</button>
+            </div>
+            <button class="primary-action full" type="button" id="timerToggleButton">Start</button>
+            <p class="gentle-copy">Stopping early still counts. The win is returning.</p>
+          </div>
+
+          <div class="panel dashboard-panel" id="dashboard">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Progress</p>
+                <h2>Proof you are moving</h2>
+                <p class="section-help">
+                  This is not a scorecard. It shows visible progress so your brain has evidence that
+                  starting, pausing, and returning all count.
+                </p>
+              </div>
+            </div>
+            <div class="progress-grid" id="progressGrid" aria-live="polite"></div>
+            <div class="progress-bar" aria-label="Today's completion progress">
+              <span id="progressBarFill"></span>
+            </div>
+            <p class="gentle-copy" id="progressMessage">Add a task or chore to begin tracking progress.</p>
+          </div>
+
+          <div class="panel chores-panel" id="chores">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Household chores</p>
+                <h2>Room-by-room support</h2>
+                <p class="section-help">
+                  Chores can feel too vague to start. Pick one room, then complete the smallest visible
+                  action first.
+                </p>
+              </div>
+            </div>
+            <div class="chore-tools">
+              <button type="button" class="secondary-action" id="pickChoreButton">Pick a chore for me</button>
+              <button type="button" class="secondary-action" id="resetChoresButton">Reset chores</button>
+            </div>
+            <div class="chore-list" id="choreList"></div>
+          </div>
+
+          <div class="panel routine-panel" id="routines">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Routines</p>
+                <h2>Soft structure</h2>
+                <p class="section-help">
+                  Routines are short repeatable checklists for transitions, like starting work or resetting
+                  after overwhelm.
+                </p>
+              </div>
+            </div>
+            <div class="routine-list" id="routineList"></div>
+          </div>
+        </section>
+
+        <section class="settings-band" id="settings" aria-labelledby="settings-title">
+          <div>
+            <p class="eyebrow">Settings</p>
+            <h2 id="settings-title">Make the space easier to stay in</h2>
+            <p class="section-help">
+              These controls change how the app feels visually. Use them when motion, contrast, or clutter
+              makes focus harder.
+            </p>
+          </div>
+          <div class="settings-grid">
+            <label class="toggle-row">
+              <span>Reduce motion</span>
+              <input id="motionToggle" type="checkbox">
+            </label>
+            <label class="toggle-row">
+              <span>High contrast</span>
+              <input id="contrastToggle" type="checkbox">
+            </label>
+            <label class="toggle-row">
+              <span>Hide extra explanations</span>
+              <input id="helpToggle" type="checkbox">
+            </label>
+            <button class="danger-action" id="clearDoneButton" type="button">Clear completed tasks</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
