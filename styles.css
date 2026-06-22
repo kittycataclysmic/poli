@@ -185,6 +185,25 @@ a {
   color: var(--text);
 }
 
+/* ── View routing — only one section visible at a time ── */
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+  animation: view-in .22s ease;
+}
+
+@keyframes view-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reduced-motion .view.active {
+  animation: none;
+}
+
 main {
   width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
@@ -194,17 +213,142 @@ main {
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+  grid-template-areas:
+    "copy companion"
+    "now  companion"
+    "rescue rescue";
   gap: clamp(1rem, 3vw, 2rem);
-  align-items: stretch;
-  min-height: min(680px, calc(100vh - 5.5rem));
+  align-items: start;
   padding: clamp(1.25rem, 4vw, 3rem) 0;
 }
+
+.hero-copy { grid-area: copy; }
+.companion-panel { grid-area: companion; }
+.now-panel { grid-area: now; margin-top: -0.25rem; }
+.rescue-disclosure { grid-area: rescue; }
 
 .hero-copy {
   display: flex;
   flex-direction: column;
   justify-content: center;
   max-width: 720px;
+}
+
+.quiet-link {
+  align-self: flex-start;
+  margin-top: .9rem;
+  padding: .4rem 0;
+  color: var(--quiet);
+  background: none;
+  border: none;
+  font-size: .92rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 0;
+}
+
+.quiet-link:hover {
+  color: var(--text);
+}
+
+.capacity-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: 1.1rem;
+}
+
+.capacity-options button {
+  padding: .5rem .85rem;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: .88rem;
+}
+
+.capacity-options button.active {
+  color: #101510;
+  background: var(--sage);
+  border-color: var(--sage);
+  font-weight: 800;
+}
+
+/* Recovery tools — collapsed by default, opens on demand */
+.rescue-disclosure {
+  margin-top: .5rem;
+}
+
+.rescue-disclosure summary {
+  padding: .85rem 1rem;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.rescue-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.rescue-disclosure summary::before {
+  content: "+ ";
+  color: var(--amber);
+}
+
+.rescue-disclosure[open] summary::before {
+  content: "– ";
+}
+
+.rescue-disclosure[open] summary {
+  border-radius: var(--radius) var(--radius) 0 0;
+  border-bottom-color: transparent;
+}
+
+.rescue-disclosure .rescue-panel {
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: none;
+}
+
+/* Brain-dump paste — collapsed inside the Tasks view */
+.capture-disclosure {
+  margin: 0 0 1rem;
+}
+
+.capture-disclosure summary {
+  padding: .6rem .1rem;
+  color: var(--sage);
+  background: none;
+  border: none;
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.capture-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.capture-disclosure summary::before {
+  content: "+ ";
+}
+
+.capture-disclosure[open] summary::before {
+  content: "– ";
+}
+
+.capture-inline {
+  display: grid;
+  gap: .7rem;
+  padding: .9rem;
+  margin-bottom: .25rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
 }
 
 .eyebrow {
@@ -248,6 +392,25 @@ h2 {
 .section-help,
 .field-help {
   color: var(--muted);
+}
+
+/* Extra explanations are tucked away by default — reduces wall-of-text density.
+   Toggling "Show extra explanations" in Settings reveals them. */
+.section-help,
+.field-help,
+.button-help {
+  display: none;
+}
+
+.show-help .section-help,
+.show-help .field-help,
+.show-help .button-help {
+  display: block;
+}
+
+/* Settings explains its own toggles — keep that one visible regardless */
+.settings-band .section-help {
+  display: block;
 }
 
 .help-copy {
@@ -521,32 +684,8 @@ a:focus-visible {
   font-size: 1.05rem;
 }
 
-.workspace-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
-  gap: 1rem;
-  align-items: start;
-}
-
 .panel {
   padding: 1.1rem;
-}
-
-.task-panel {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-  align-self: stretch;
-  height: 100%;
-}
-
-.next-panel    { grid-column: 2; grid-row: 1; }
-.focus-panel   { grid-column: 2; grid-row: 2; }
-.dashboard-panel { grid-column: 2; grid-row: 3; }
-
-.chores-panel,
-.routine-panel {
-  grid-column: 1 / -1;
-  grid-row: auto;
 }
 
 .panel-heading {
@@ -771,6 +910,23 @@ textarea {
   font-weight: 900;
 }
 
+.timer-progress {
+  height: .6rem;
+  margin-bottom: .8rem;
+  overflow: hidden;
+  background: #0e100e;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.timer-progress span {
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sage), var(--amber));
+  transition: width 1s linear;
+}
+
 .focus-panel .panel-heading {
   align-items: start;
 }
@@ -948,28 +1104,20 @@ textarea {
     width: 100%;
   }
 
-  .hero,
-  .workspace-grid,
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "companion"
+      "copy"
+      "now"
+      "rescue";
+  }
+
   .settings-band {
     grid-template-columns: 1fr;
   }
 
-  .workspace-grid {
-    grid-template-rows: auto;
-  }
-
-  .task-panel,
-  .next-panel,
-  .focus-panel,
-  .dashboard-panel,
-  .chores-panel,
-  .routine-panel {
-    grid-column: 1;
-    grid-row: auto;
-  }
-
   .hero {
-    min-height: auto;
     padding-top: 1rem;
   }
 
