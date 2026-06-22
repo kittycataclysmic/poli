@@ -190,10 +190,17 @@ a {
   display: none;
 }
 
+/* Use revert so each view uses its own declared display type.
+   The hero needs grid; panels need block; settings-band needs grid.
+   revert hands control back to the element's own rules. */
 .view.active {
-  display: block;
+  display: revert;
   animation: view-in .22s ease;
 }
+
+/* Explicit fallback for browsers with weak revert support */
+.hero.active          { display: grid; }
+.settings-band.active { display: grid; }
 
 @keyframes view-in {
   from { opacity: 0; transform: translateY(6px); }
