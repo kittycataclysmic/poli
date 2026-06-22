@@ -161,6 +161,22 @@ a {
   right: .62rem;
 }
 
+.topbar-credit {
+  flex-shrink: 0;
+  min-width: max-content;
+  font-size: .78rem;
+  color: var(--quiet);
+  letter-spacing: .01em;
+}
+
+.topbar-credit strong {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.topbar-credit:hover { color: var(--text); }
+.topbar-credit:hover strong { color: var(--cream); }
+
 .section-tabs {
   display: flex;
   gap: .25rem;
@@ -1106,6 +1122,8 @@ textarea {
     align-items: stretch;
     flex-direction: column;
   }
+
+  .topbar-credit { display: none; }
 
   .section-tabs {
     width: 100%;
