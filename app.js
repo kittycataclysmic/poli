@@ -47,6 +47,7 @@ const defaultChores = [
 
 const state = loadState();
 let activeFilter = "all";
+let activeView = state.activeView || "today";
 let selectedTaskId = state.selectedTaskId || null;
 let timerSeconds = state.timerMinutes * 60;
 let timerInterval = null;
@@ -71,6 +72,7 @@ const resetTimerButton = document.querySelector("#resetTimerButton");
 const clearDoneButton = document.querySelector("#clearDoneButton");
 const motionToggle = document.querySelector("#motionToggle");
 const contrastToggle = document.querySelector("#contrastToggle");
+const helpToggle = document.querySelector("#helpToggle");
 const routineList = document.querySelector("#routineList");
 const progressGrid = document.querySelector("#progressGrid");
 const progressBarFill = document.querySelector("#progressBarFill");
@@ -78,6 +80,13 @@ const progressMessage = document.querySelector("#progressMessage");
 const choreList = document.querySelector("#choreList");
 const pickChoreButton = document.querySelector("#pickChoreButton");
 const resetChoresButton = document.querySelector("#resetChoresButton");
+const twoMinuteButton = document.querySelector("#twoMinuteButton");
+const bodyDoubleButton = document.querySelector("#bodyDoubleButton");
+const breakButton = document.querySelector("#breakButton");
+const rescueOutput = document.querySelector("#rescueOutput");
+const compileDumpButton = document.querySelector("#compileDumpButton");
+const brainDumpText = document.querySelector("#brainDumpText");
+const timerProgressFill = document.querySelector("#timerProgressFill");
 
 document.addEventListener("DOMContentLoaded", () => {
   render();
@@ -89,6 +98,8 @@ function loadState() {
     tasks: [],
     timerMinutes: 5,
     selectedTaskId: null,
+    activeView: "today",
+    showHelp: false,
     routines: defaultRoutines,
     routineProgress: {},
     chores: defaultChores,
@@ -113,6 +124,7 @@ function loadState() {
 
 function saveState() {
   state.selectedTaskId = selectedTaskId;
+  state.activeView = activeView;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
@@ -161,11 +173,80 @@ function bindEvents() {
     applyPreferences();
   });
 
-  document.querySelectorAll(".section-tabs a").forEach((link) => {
-    link.addEventListener("click", () => {
-      document.querySelectorAll(".section-tabs a").forEach((item) => item.classList.toggle("active", item === link));
+  document.querySelectorAll("[data-nav]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      setView(link.dataset.nav);
     });
   });
+
+  document.querySelectorAll(".capacity-options button").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".capacity-options button").forEach((b) => b.classList.toggle("active", b === button));
+      state.capacity = button.dataset.capacity;
+      saveState();
+    });
+  });
+
+  helpToggle.addEventListener("change", () => {
+    state.showHelp = helpToggle.checked;
+    saveState();
+    applyPreferences();
+  });
+
+  twoMinuteButton.addEventListener("click", () => {
+    const task = getSelectedTask();
+    const line = task
+      ? `Set a 2-minute timer. Only do the very first piece of "${task.title}". Stop when it rings — continuing is optional.`
+      : "Set a 2-minute timer. Pick anything small and visible nearby. Stop when it rings — continuing is optional.";
+    rescueOutput.textContent = line;
+  });
+
+  bodyDoubleButton.addEventListener("click", () => {
+    rescueOutput.textContent = "Say out loud (or type it somewhere): \"I am starting now.\" Narrate the first physical motion as you do it. You're borrowing Poli's presence, not your own pressure.";
+  });
+
+  breakButton.addEventListener("click", () => {
+    rescueOutput.textContent = "Step away for 5 minutes. Water, a stretch, or quiet is enough. Nothing here will have moved when you come back.";
+  });
+
+  compileDumpButton.addEventListener("click", compileBrainDump);
+}
+
+function compileBrainDump() {
+  const lines = brainDumpText.value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (!lines.length) {
+    setNote("Paste a few lines first — one thought per line is enough.");
+    return;
+  }
+
+  lines.forEach((line) => {
+    state.tasks.unshift({
+      id: createId(),
+      title: line.slice(0, 90),
+      energy: "medium",
+      minutes: estimateMinutes(line),
+      done: false,
+      createdAt: Date.now()
+    });
+  });
+
+  selectedTaskId = state.tasks[0].id;
+  brainDumpText.value = "";
+  saveState();
+  render();
+  setNote(`Added ${lines.length} task${lines.length === 1 ? "" : "s"} from your brain dump.`);
+}
+
+function estimateMinutes(line) {
+  if (/email|message|reply|text|call/i.test(line)) return 10;
+  if (/clean|tidy|laundry|dishes|trash|organize/i.test(line)) return 15;
+  if (/book|schedule|appointment|pay|bill/i.test(line)) return 10;
+  return 15;
 }
 
 function addTask(event) {
@@ -194,6 +275,28 @@ function addTask(event) {
   setNote("New task added. I made it the current next step.");
 }
 
+function setView(view) {
+  activeView = view;
+  saveState();
+  renderView();
+}
+
+function renderView() {
+  document.querySelectorAll(".view").forEach((section) => {
+    section.classList.toggle("active", section.dataset.view === activeView);
+  });
+  document.querySelectorAll(".section-tabs a[data-nav]").forEach((link) => {
+    link.classList.toggle("active", link.dataset.nav === activeView);
+  });
+  if (!state.reducedMotion) {
+    const active = document.querySelector(".view.active");
+    if (active) active.scrollIntoView({ behavior: "auto", block: "start" });
+    window.scrollTo({ top: 0, behavior: "auto" });
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
+
 function render() {
   applyPreferences();
   updateTimerOptions();
@@ -203,13 +306,16 @@ function render() {
   renderRoutines();
   renderChores();
   renderDashboard();
+  renderView();
 }
 
 function applyPreferences() {
   appShell.classList.toggle("reduced-motion", state.reducedMotion);
   appShell.classList.toggle("high-contrast", state.highContrast);
+  appShell.classList.toggle("show-help", !!state.showHelp);
   motionToggle.checked = state.reducedMotion;
   contrastToggle.checked = state.highContrast;
+  helpToggle.checked = !!state.showHelp;
 }
 
 function renderTasks() {
@@ -490,7 +596,7 @@ function enterOverwhelmMode() {
   renderTasks();
   renderNextCard();
   renderTinySteps(true);
-  document.querySelector(".next-panel").scrollIntoView({ behavior: state.reducedMotion ? "auto" : "smooth", block: "start" });
+  setView("today");
   setNote("Screen simplified. Take one breath, then choose only the first tiny action.");
 }
 
@@ -588,6 +694,10 @@ function renderTimer() {
   const minutes = Math.floor(timerSeconds / 60).toString().padStart(2, "0");
   const seconds = (timerSeconds % 60).toString().padStart(2, "0");
   timerDisplay.textContent = `${minutes}:${seconds}`;
+  const total = state.timerMinutes * 60;
+  const elapsed = total - timerSeconds;
+  const pct = total ? Math.min(100, Math.max(0, (elapsed / total) * 100)) : 0;
+  timerProgressFill.style.width = `${pct}%`;
 }
 
 function updateTimerOptions() {
