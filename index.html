@@ -10,7 +10,7 @@
   <body>
     <div class="app-shell" data-theme="dim">
       <header class="topbar">
-        <a class="brand" href="#today" aria-label="Poli home">
+        <a class="brand" href="#" data-nav="today" aria-label="Poli home">
           <span class="cat-mark" aria-hidden="true">
             <span class="cat-ear left"></span>
             <span class="cat-ear right"></span>
@@ -26,37 +26,37 @@
         </a>
 
         <nav class="section-tabs" aria-label="App sections">
-          <a href="#today" class="active">Today</a>
-          <a href="#start">Start</a>
-          <a href="#focus">Focus</a>
-          <a href="#chores">Chores</a>
-          <a href="#dashboard">Progress</a>
-          <a href="#routines">Routines</a>
-          <a href="#settings">Settings</a>
+          <a href="#" data-nav="today" class="active">Today</a>
+          <a href="#" data-nav="tasks">Tasks</a>
+          <a href="#" data-nav="focus">Focus</a>
+          <a href="#" data-nav="chores">Chores</a>
+          <a href="#" data-nav="progress">Progress</a>
+          <a href="#" data-nav="routines">Routines</a>
+          <a href="#" data-nav="settings">Settings</a>
         </nav>
       </header>
 
       <main>
-        <section class="hero" id="today" aria-labelledby="hero-title">
+        <!-- ════════════ TODAY — single calm landing, one action ════════════ -->
+        <section class="view hero active" id="view-today" data-view="today" aria-labelledby="hero-title">
           <div class="hero-copy">
-            <p class="eyebrow">For softer starts, clearer days, and kinder recovery.</p>
-            <h1 id="hero-title">Let Poli help you choose one calm next step.</h1>
-            <p>
-              A sensory-friendly task space for autistic and ADHD adults, built around tiny actions,
-              low-pressure focus, routines, and overwhelm recovery.
+            <p class="eyebrow">For softer starts, clearer days</p>
+            <h1 id="hero-title">One calm next step.</h1>
+            <p class="help-copy" id="todayHelp">
+              Poli holds the list so your head doesn't have to. Tell me how today feels, and I'll choose
+              something doable.
             </p>
-            <p class="help-copy">
-              Start by writing down what is in your head. Poli keeps the list visible, then helps you
-              choose one doable step instead of trying to hold everything at once.
-            </p>
+
+            <div class="capacity-options" aria-label="Current capacity">
+              <button type="button" data-capacity="low">Low capacity</button>
+              <button type="button" data-capacity="medium" class="active">Medium</button>
+              <button type="button" data-capacity="high">Ready for more</button>
+            </div>
+
             <div class="hero-actions">
               <button class="primary-action" id="pickTaskButton" type="button">Pick my next step</button>
-              <button class="secondary-action" id="overwhelmButton" type="button">I feel overwhelmed</button>
             </div>
-            <p class="button-help">
-              <strong>Pick my next step</strong> chooses a low-effort task for you. <strong>I feel overwhelmed</strong>
-              simplifies the screen and shows the smallest possible action.
-            </p>
+            <button class="quiet-link" id="overwhelmButton" type="button">I feel overwhelmed right now</button>
           </div>
 
           <aside class="companion-panel" aria-label="Poli companion">
@@ -84,79 +84,50 @@
               Add a few tasks, then I can help you choose one.
             </div>
           </aside>
+
+          <!-- Now card sits right under the landing so the chosen step is the very next thing seen -->
+          <div class="panel next-panel now-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Now</p>
+                <h2>Current next step</h2>
+              </div>
+            </div>
+            <div class="next-card" id="nextCard">
+              <p>No task selected yet.</p>
+              <small>Poli works best when the next action is small enough to begin in two minutes.</small>
+            </div>
+            <div class="micro-actions">
+              <button type="button" id="makeTinyButton">Make it tiny</button>
+              <button type="button" id="startFocusButton" data-nav="focus">Start focus</button>
+            </div>
+            <div class="tiny-steps" id="tinySteps" hidden></div>
+          </div>
+
+          <details class="rescue-disclosure">
+            <summary>Stuck starting? Recovery tools</summary>
+            <div class="panel rescue-panel">
+              <p class="section-help">For task paralysis, demand avoidance, or returning after distraction.</p>
+              <div class="rescue-actions">
+                <button type="button" id="twoMinuteButton">Give me a 2-minute start</button>
+                <button type="button" id="bodyDoubleButton">Body-double script</button>
+                <button type="button" id="breakButton">I need a reset break</button>
+              </div>
+              <div class="rescue-output" id="rescueOutput" aria-live="polite">
+                Pick one when starting feels blocked.
+              </div>
+            </div>
+          </details>
         </section>
 
-        <section class="launch-pad" id="start" aria-label="Start support">
-          <div class="panel checkin-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Start here</p>
-                <h2>Match the app to your capacity</h2>
-                <p class="section-help">
-                  Capacity changes day to day. Poli will pick gentler tasks when your energy is low.
-                </p>
-              </div>
-            </div>
-            <div class="capacity-options" aria-label="Current capacity">
-              <button type="button" data-capacity="low">Low capacity</button>
-              <button type="button" data-capacity="medium" class="active">Medium</button>
-              <button type="button" data-capacity="high">Ready for more</button>
-            </div>
-          </div>
-
-          <div class="panel capture-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Messy capture</p>
-                <h2>Paste the whole brain dump</h2>
-                <p class="section-help">
-                  Use this when single-task entry is too slow. Each line becomes a task, and Poli gives it
-                  a gentle time estimate.
-                </p>
-              </div>
-            </div>
-            <label>
-              Brain dump text
-              <textarea id="brainDumpText" rows="5" placeholder="Example:
-reply to Mina
-laundry
-book dentist
-clean kitchen counter"></textarea>
-            </label>
-            <button class="primary-action full" id="compileDumpButton" type="button">Turn into tasks</button>
-          </div>
-
-          <div class="panel rescue-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">If stuck</p>
-                <h2>Recovery tools</h2>
-                <p class="section-help">
-                  These are for task paralysis, demand avoidance, or returning after distraction.
-                </p>
-              </div>
-            </div>
-            <div class="rescue-actions">
-              <button type="button" id="twoMinuteButton">Give me a 2-minute start</button>
-              <button type="button" id="bodyDoubleButton">Body-double script</button>
-              <button type="button" id="breakButton">I need a reset break</button>
-            </div>
-            <div class="rescue-output" id="rescueOutput" aria-live="polite">
-              Pick one when starting feels blocked.
-            </div>
-          </div>
-        </section>
-
-        <section class="workspace-grid" aria-label="Productivity workspace">
+        <!-- ════════════ TASKS — brain dump + list, on its own ════════════ -->
+        <section class="view" id="view-tasks" data-view="tasks" aria-label="Tasks">
           <div class="panel task-panel">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">Brain dump</p>
                 <h2>Add what is taking up space</h2>
-                <p class="section-help">
-                  Brain dump is for getting thoughts out of your head and into one calm place. It does
-                  not need to be organized yet.
-                </p>
+                <p class="section-help">Get thoughts out of your head and into one calm place. It does not need to be organized yet.</p>
               </div>
               <span class="task-count" id="taskCount">0 tasks</span>
             </div>
@@ -174,7 +145,6 @@ clean kitchen counter"></textarea>
                     <option value="medium" selected>Medium</option>
                     <option value="high">High</option>
                   </select>
-                  <span class="field-help">How much effort this may take today.</span>
                 </label>
                 <label>
                   Time
@@ -185,11 +155,25 @@ clean kitchen counter"></textarea>
                     <option value="25">25 min</option>
                     <option value="45">45 min</option>
                   </select>
-                  <span class="field-help">A rough guess, not a promise.</span>
                 </label>
               </div>
               <button class="primary-action full" type="submit">Add task</button>
             </form>
+
+            <details class="capture-disclosure">
+              <summary>Paste a whole brain dump instead</summary>
+              <div class="capture-inline">
+                <label>
+                  Brain dump text
+                  <textarea id="brainDumpText" rows="4" placeholder="Example:
+reply to Mina
+laundry
+book dentist
+clean kitchen counter"></textarea>
+                </label>
+                <button class="secondary-action full" id="compileDumpButton" type="button">Turn into tasks</button>
+              </div>
+            </details>
 
             <div class="filters" aria-label="Task filters">
               <button type="button" class="chip active" data-filter="all">All</button>
@@ -200,38 +184,16 @@ clean kitchen counter"></textarea>
 
             <ul class="task-list" id="taskList" aria-live="polite"></ul>
           </div>
+        </section>
 
-          <div class="panel next-panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Now</p>
-                <h2>Current next step</h2>
-                <p class="section-help">
-                  This is the one thing to look at right now, so the whole list does not have to compete
-                  for your attention.
-                </p>
-              </div>
-            </div>
-            <div class="next-card" id="nextCard">
-              <p>No task selected yet.</p>
-              <small>Poli works best when the next action is small enough to begin in two minutes.</small>
-            </div>
-            <div class="micro-actions">
-              <button type="button" id="makeTinyButton">Make it tiny</button>
-              <button type="button" id="startFocusButton">Start focus</button>
-            </div>
-            <div class="tiny-steps" id="tinySteps" hidden></div>
-          </div>
-
-          <div class="panel focus-panel" id="focus">
+        <!-- ════════════ FOCUS — timer alone ════════════ -->
+        <section class="view" id="view-focus" data-view="focus" aria-label="Focus">
+          <div class="panel focus-panel">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">Focus</p>
                 <h2>Gentle timer</h2>
-                <p class="section-help">
-                  Focus gives your brain a small time container. You can stop early, pause, or restart
-                  without losing progress.
-                </p>
+                <p class="section-help">A small time container. Stop early, pause, or restart without losing progress.</p>
               </div>
               <button type="button" class="icon-button" id="resetTimerButton" aria-label="Reset timer">Reset</button>
             </div>
@@ -252,34 +214,16 @@ clean kitchen counter"></textarea>
             <button class="primary-action full" type="button" id="timerToggleButton">Start</button>
             <p class="gentle-copy">Stopping early still counts. The win is returning.</p>
           </div>
+        </section>
 
-          <div class="panel dashboard-panel" id="dashboard">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Progress</p>
-                <h2>Proof you are moving</h2>
-                <p class="section-help">
-                  This is not a scorecard. It shows visible progress so your brain has evidence that
-                  starting, pausing, and returning all count.
-                </p>
-              </div>
-            </div>
-            <div class="progress-grid" id="progressGrid" aria-live="polite"></div>
-            <div class="progress-bar" aria-label="Today's completion progress">
-              <span id="progressBarFill"></span>
-            </div>
-            <p class="gentle-copy" id="progressMessage">Add a task or chore to begin tracking progress.</p>
-          </div>
-
-          <div class="panel chores-panel" id="chores">
+        <!-- ════════════ CHORES — own view ════════════ -->
+        <section class="view" id="view-chores" data-view="chores" aria-label="Chores">
+          <div class="panel chores-panel">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">Household chores</p>
                 <h2>Room-by-room support</h2>
-                <p class="section-help">
-                  Chores can feel too vague to start. Pick one room, then complete the smallest visible
-                  action first.
-                </p>
+                <p class="section-help">Pick one room, then complete the smallest visible action first.</p>
               </div>
             </div>
             <div class="chore-tools">
@@ -288,23 +232,42 @@ clean kitchen counter"></textarea>
             </div>
             <div class="chore-list" id="choreList"></div>
           </div>
+        </section>
 
-          <div class="panel routine-panel" id="routines">
+        <!-- ════════════ PROGRESS — own view ════════════ -->
+        <section class="view" id="view-progress" data-view="progress" aria-label="Progress">
+          <div class="panel dashboard-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Progress</p>
+                <h2>Proof you are moving</h2>
+                <p class="section-help">Not a scorecard. Evidence that starting, pausing, and returning all count.</p>
+              </div>
+            </div>
+            <div class="progress-grid" id="progressGrid" aria-live="polite"></div>
+            <div class="progress-bar" aria-label="Today's completion progress">
+              <span id="progressBarFill"></span>
+            </div>
+            <p class="gentle-copy" id="progressMessage">Add a task or chore to begin tracking progress.</p>
+          </div>
+        </section>
+
+        <!-- ════════════ ROUTINES — own view ════════════ -->
+        <section class="view" id="view-routines" data-view="routines" aria-label="Routines">
+          <div class="panel routine-panel">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">Routines</p>
                 <h2>Soft structure</h2>
-                <p class="section-help">
-                  Routines are short repeatable checklists for transitions, like starting work or resetting
-                  after overwhelm.
-                </p>
+                <p class="section-help">Short repeatable checklists for transitions, like starting work or resetting after overwhelm.</p>
               </div>
             </div>
             <div class="routine-list" id="routineList"></div>
           </div>
         </section>
 
-        <section class="settings-band" id="settings" aria-labelledby="settings-title">
+        <!-- ════════════ SETTINGS — tucked away, last tab ════════════ -->
+        <section class="view settings-band" id="view-settings" data-view="settings" aria-labelledby="settings-title">
           <div>
             <p class="eyebrow">Settings</p>
             <h2 id="settings-title">Make the space easier to stay in</h2>
@@ -323,7 +286,7 @@ clean kitchen counter"></textarea>
               <input id="contrastToggle" type="checkbox">
             </label>
             <label class="toggle-row">
-              <span>Hide extra explanations</span>
+              <span>Show extra explanations</span>
               <input id="helpToggle" type="checkbox">
             </label>
             <button class="danger-action" id="clearDoneButton" type="button">Clear completed tasks</button>
